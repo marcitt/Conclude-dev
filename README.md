@@ -34,28 +34,39 @@ ollama run llama3:8b
 ```
 
 If you would prefer to use a different model (e.g. that takes up less storage) you can research here: https://ollama.com/search
-However you will need to modify some lines of code in your local repo to make sure everything is working.
+however you will need to modify some lines of code in your local repo to make sure everything is working.
 
-Anywhere in the code where an llm is initialised you will have to replace "llama3:8b" with your chosen model:
+Anywhere in the code where an LLM is initialised you will have to replace "llama3:8b" with your chosen model:
 ```
 llm = Ollama(model="llama3:8b", temperature=0) 
 ```
 
 #### Method 1: Setup with conda (preferred method)
-I prefer to use Conda (Anaconda) for managing environments - if you already know how to use this I would recommend as it is often easier to manage and work with pytesseract etc. to set-up with Conda instead do this: 
+I prefer to use conda (Anaconda) for managing environments - if you already know how to use this I would recommend as I find it easier to work with. 
 
-Install anaconda: https://www.anaconda.com/download
+⚠️ Using Anaconda/Conda can change your system PATH which can present issues e.g. it may set the conda installation of Python to your default, which might not be desirable if you typically prefer to work with another Python installation. If you have issues with this I can help out but just a warning in advance. ⚠️
+
+To set up the backend environment with Anaconda follow the steps below:
+
+(If not already installed) Install anaconda: https://www.anaconda.com/download
 
 Check it has been installed correctly:
 ```
 conda --version
 ```
 
-Run:
+Make sure your current working directory is conclude-dev/backend 
+e.g. when you open the conclude repo run:
+```
+cd backend
+```
+
+To create the environment run:
 ```
 conda env create -f environment.yaml
 ```
 
+To activate the environment run:
 ```
 conda activate conclude
 ```
@@ -65,56 +76,65 @@ If you ever want to deactivate environment:
 conda deactivate conclude
 ```
 
-⚠️ Using Anaconda/Conda can change your system PATH which can present issues e.g. it may set the conda installation of Python to your default, which might not be desirable if you typically prefer to work with another Python installation. If you have issues with this I can help out but just a warning in advance.
-
-
-#### Method 2: Setup with venv (may be easier)
+#### Method 2: Setup with venv (if you prefer not to work with conda)
+This method uses a virtual environment (venv) and pip, which is a more traditional way of managing dependencies, but involves more steps.
 
 ##### Installing Tesseract
 
-To use the OCR library `pytesseract` we need to make sure `tesseract` is installed on the system/PATH. To do this on mac/unix this should be possible by running:
+To use the OCR library `pytesseract` we need to make sure `tesseract` is installed on the system/PATH, if you follow method 1 conda manages this installation - however tesseract cannot be installed using `pip` so for Method 2 we have to do a system-wide installation. 
 
-Note: If you are comfortable using Anaconda and conda environments you can skip this step.
+Details for installing `tesseract` are included here:
+https://www.geeksforgeeks.org/python/introduction-to-python-pytesseract-package/
 
+If you are using mac and have a homebrew installation you can just run:
 ```
 brew install tesseract
 ```
-This uses homebrew to install tesseract - if you don't have homebrew configured or are on windows you might have to research how to do this yourself. 
-
-For further details on installing tesseract (e.g. for windows) details are included here:
-https://www.geeksforgeeks.org/python/introduction-to-python-pytesseract-package/
-
 
 ##### Setting up virtual environment
 
+Navigate to conclude-dev/backend:
 ```
 cd backend
 ```
 
+Create the virtual environment: 
 ```
 python -m venv venv
 ```
 ⚠️ for mac may need to use python3 depending on how Python is configured on your system
 
+Activate the virtual environment:
 ```
 source venv/bin/activate
 ```
 for windows use: `venv\Scripts\activate`
 
+Install dependencies: 
 ```
 python -m pip install -r requirements.txt
 ```
 
+#### Testing
+To check your environment has been configured properly run:
 ```
 python setup-test.py
 ```
+Make sure Ollama is running in the background and your virtual environment is activated. If you are using `venv` (Method 2) make sure it is activated with `source venv/bin/activate` or if you are using `conda` (Method 1) make sure it is activated with `conda activate conclude` 
+
+Once you have the basic code running I'd recommend playing around with the code in setup-test.py so you can get an idea for how interacting with LLMs and prompts work as well as OCR - try loading in and reading out different images. If you setup your virtual environment with conda you can also test this out in `playground.ipynb` which is a Juypter notebook so easier to experiment with and test individual code cells. Just make sure you are using the anaconda `conclude` environment for the kernel.
+
+#### Bank Statement Scanning
+Once you are comfortable with the setup and running basic functions you can try working with the backend/ML/bank_scanning.py code.
+
+The main task associated with this code is prompt engineering - adjusting the prompts to provide better insight into the bank statements and formatted outputs.
 
 
 ## Client
-The client (also known as frontend) will be what the user interacts with. We are using React for the frontend.
+Next we will want to run the client. The client (also known as frontend) will be what the user interacts with. We are using React for the frontend.
 
 ### Getting started
-To setup the client make sure to enter the directory:
+To setup the client make sure to enter the directory conclude-dev/client:
 ```
 cd client
 ```
@@ -128,3 +148,8 @@ You should then be able to run the frontend:
 npm run dev
 ```
 Navigate to the link provided and you should be able to see the frontend running.
+
+## Connecting Frontend and Backend
+To enable the frontend and backend to communicate simply make sure you have run `python server.py` and `npm run dev` in two seperate split terminals. This will mean the backend and frontend are both running at the same time and should be able to interact with each other.
+
+That should be everything :) 
